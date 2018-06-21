@@ -4,6 +4,7 @@ import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
 from pysnmp.proto import rfc1902
 from pysnmp.smi import builder, view
 from pysnmp.smi.error import SmiError
+from os.path import normpath
 
 
 class Snmpy(object):
@@ -57,13 +58,13 @@ class Snmpy(object):
         self.load_mibs('SNMPv2-MIB', 'IF-MIB', 'IP-MIB',
                        'HOST-RESOURCES-MIB', 'FIBRE-CHANNEL-FE-MIB')
 
-    def add_mib_path(self, *path):
+    def add_mib_path(self, path):
         """Add an additional directory to the MIB search path.
 
         :param path: path to additional MIBs
         """
-        mib_path = self._mib_builder.getMibPath() + path
-        self._mib_builder.setMibPath(*mib_path)
+        mib_path = normpath(path)
+        self._mib_builder.addMibSources(builder.DirMibSource(mib_path))
 
     def load_mibs(self, *modules):
         """Load one or more additional MIBs.
